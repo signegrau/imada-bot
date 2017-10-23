@@ -1,5 +1,7 @@
 import discord
 import asyncio
+from discord_token import get_token
+
 
 class imadabot(discord.Client):
     def __init__(self):
@@ -16,6 +18,9 @@ class imadabot(discord.Client):
         print('------')
 
     async def on_message(self, message):
+        if not message.content.startswith('!'):
+            return
+
         if message.content.startswith('!listen'):
             self.testing_channel = message.channel
             await self.send_message(message.channel, 'This is the testing channel')
@@ -35,4 +40,4 @@ class imadabot(discord.Client):
 
 if __name__ == "__main__":
     bot = imadabot()
-    bot.run('token')
+    bot.run(get_token())
