@@ -12,11 +12,6 @@ class roleassigner(commandmodule):
 
         self.roles = self.config['roles']
 
-    async def setup(self, client):
-        for channel_id in self.config['channels']:
-            channel = client.get_channel(channel_id)
-            self.add_channel(channel)
-
     async def join(self, client, message, arguments):
         role_text = arguments[:6]
         member = message.author

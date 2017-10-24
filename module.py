@@ -10,6 +10,10 @@ class commandmodule:
     def add_channel(self, channel):
         self.channels.append(channel)
 
+    def add_channels(self, **channels):
+        for channel in channels:
+            self.add_channel(channel)
+
     def has_channel(self, channel):
         return channel in self.channels
 

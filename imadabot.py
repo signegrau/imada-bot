@@ -28,6 +28,12 @@ class imadabot(discord.Client):
         print('------')
 
         for module in self.modules:
+            if module.name in self.config:
+                for channel_id in self.config[module.name]['channels']:
+                    channel = self.get_channel(channel_id)
+                    module.add_channel(channel)
+
+        for module in self.modules:
             await module.setup(self)
 
     async def on_message(self, message):
@@ -48,13 +54,19 @@ class imadabot(discord.Client):
             if message.channel.permissions_for(message.author).administrator:
                 module = self.get_module(arguments)
 
-                if module:
+                if module and not module.has_channel(message.channel):
                     module.add_channel(message.channel)
+                    if arguments not in self.config:
+                        self.config[arguments] = {
+                            'channels': []
+                        }
+
                     self.config[arguments]['channels'].append(message.channel.id)
-                    await self.send_message(message.channel, 'This is the testing channel')
+                    await self.send_message(message.channel, f'Added modules `{arguments}` to `{message.channel.name}`')
                     self.save_config()
                 else:
-                    await self.send_message(message.channel, f'No module named `{arguments}`')
+                    await self.send_message(message.channel,
+                                            f'No module named `{arguments}` or already added to channel')
             else:
                 await self.send_message(message.channel, 'Only a administrator can do that')
 
