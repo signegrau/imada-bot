@@ -2,6 +2,7 @@ import discord
 import asyncio
 from discord_token import get_token
 from testmodule import testmodule
+from roleassigner import roleassigner
 
 
 class imadabot(discord.Client):
@@ -10,7 +11,8 @@ class imadabot(discord.Client):
         self.testing_channel = None
 
         self.modules = [
-            testmodule()
+            testmodule(),
+            roleassigner()
         ]
         
     def run(self, token):
@@ -27,7 +29,7 @@ class imadabot(discord.Client):
             return
 
         command, _, arguments = message.content.partition(' ')
-        command = command[1:]
+        command = command[1:].lower()
         arguments = arguments.strip()
 
         modules = self.get_loaded_modules(message.channel)
