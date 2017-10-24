@@ -22,8 +22,11 @@ class imadabot(discord.Client):
             return
 
         if message.content.startswith('!listen'):
-            self.testing_channel = message.channel
-            await self.send_message(message.channel, 'This is the testing channel')
+            if message.channel.permissions_for(message.author).administrator:
+                self.testing_channel = message.channel
+                await self.send_message(message.channel, 'This is the testing channel')
+            else:
+                await self.send_message(message.channel, 'Only a administrator can do that')
         elif self.testing_channel == message.channel:
             if message.content.startswith('!test'):
                 counter = 0
