@@ -50,7 +50,7 @@ class imadabot(discord.Client):
             if module.has_command(command):
                 await module.run_command(command, self, message, arguments)
 
-        if command == 'channelload':
+        if command == 'channeladd':
             if message.channel.permissions_for(message.author).administrator:
                 module = self.get_module(arguments)
 
