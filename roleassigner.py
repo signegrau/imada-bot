@@ -13,7 +13,7 @@ class roleassigner(commandmodule):
         self.roles = self.config['roles']
 
     async def join(self, client, message, arguments):
-        role_text = arguments[:6]
+        role_text = arguments[:6].lower()
         member = message.author
 
         if role_text in self.roles:
@@ -28,7 +28,7 @@ class roleassigner(commandmodule):
             await client.add_reaction(message, '❌')
 
     async def leave(self, client, message, arguments):
-        role_text = arguments[:6]
+        role_text = arguments[:6].lower()
         member = message.author
 
         if role_text in self.roles:
