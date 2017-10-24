@@ -16,5 +16,8 @@ class commandmodule:
     def has_command(self, command):
         return command in self.commands
 
+    async def setup(self, client):
+        pass
+
     async def run_command(self, command, client, message, arguments):
         await self.commands[command](client, message, arguments)

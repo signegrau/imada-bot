@@ -1,5 +1,5 @@
 import discord
-import asyncio
+import json
 from discord_token import get_token
 from testmodule import testmodule
 from roleassigner import roleassigner
@@ -8,11 +8,14 @@ from roleassigner import roleassigner
 class imadabot(discord.Client):
     def __init__(self):
         super(imadabot, self).__init__()
-        self.testing_channel = None
+
+        self.config = {}
+        with open('config.json', 'r') as file:
+            self.config = json.loads(file.read())
 
         self.modules = [
             testmodule(),
-            roleassigner()
+            roleassigner(self.config['roleassigner'])
         ]
         
     def run(self, token):
@@ -23,6 +26,9 @@ class imadabot(discord.Client):
         print(self.user.name)
         print(self.user.id)
         print('------')
+
+        for module in self.modules:
+            await module.setup(self)
 
     async def on_message(self, message):
         if not message.content.startswith('!'):
@@ -44,11 +50,17 @@ class imadabot(discord.Client):
 
                 if module:
                     module.add_channel(message.channel)
+                    self.config[arguments]['channels'].append(message.channel.id)
                     await self.send_message(message.channel, 'This is the testing channel')
+                    self.save_config()
                 else:
                     await self.send_message(message.channel, f'No module named `{arguments}`')
             else:
                 await self.send_message(message.channel, 'Only a administrator can do that')
+
+    def save_config(self):
+        with open('config.json', 'w') as file:
+            file.write(json.dumps(self.config, indent=4))
 
     def get_loaded_modules(self, channel):
         modules = []

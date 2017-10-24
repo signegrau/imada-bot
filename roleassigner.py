@@ -2,18 +2,20 @@ from module import commandmodule
 import discord
 
 class roleassigner(commandmodule):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__('roleassigner', [], {
             'join': self.join,
             'leave': self.leave
         })
 
-        self.roles = {
-            'comput': '367283243931795457',
-            'mathem': '367283499402657792',
-            'applie': '367283552439762945',
-            'mat-øk': '367283667136937984'
-        }
+        self.config = config
+
+        self.roles = self.config['roles']
+
+    async def setup(self, client):
+        for channel_id in self.config['channels']:
+            channel = client.get_channel(channel_id)
+            self.add_channel(channel)
 
     async def join(self, client, message, arguments):
         role_text = arguments[:6]
