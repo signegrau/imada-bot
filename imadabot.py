@@ -24,11 +24,15 @@ class imadabot(discord.Client):
 
         command, _, arguments = message.content.partition(' ')
         command = command[1:]
+        arguments = arguments.strip()
 
-        if command == 'listen':
+        if command == 'setchannel':
             if message.channel.permissions_for(message.author).administrator:
-                self.testing_channel = message.channel
-                await self.send_message(message.channel, 'This is the testing channel')
+                if arguments == 'test':
+                    self.testing_channel = message.channel
+                    await self.send_message(message.channel, 'This is the testing channel')
+                else:
+                    await self.send_message(message.channel, f'Unknown channel type `{arguments}`')
             else:
                 await self.send_message(message.channel, 'Only a administrator can do that')
         elif self.testing_channel == message.channel:
