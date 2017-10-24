@@ -21,14 +21,17 @@ class imadabot(discord.Client):
         if not message.content.startswith('!'):
             return
 
-        if message.content.startswith('!listen'):
+        command, _, arguments = message.content.partition(' ')
+        command = command[1:]
+
+        if command == 'listen':
             if message.channel.permissions_for(message.author).administrator:
                 self.testing_channel = message.channel
                 await self.send_message(message.channel, 'This is the testing channel')
             else:
                 await self.send_message(message.channel, 'Only a administrator can do that')
         elif self.testing_channel == message.channel:
-            if message.content.startswith('!test'):
+            if command == 'test':
                 counter = 0
                 tmp = await self.send_message(message.channel, 'Calculating messages...')
                 async for log in self.logs_from(message.channel, limit=100):
@@ -36,7 +39,7 @@ class imadabot(discord.Client):
                         counter += 1
 
                 await self.edit_message(tmp, 'You have {} messages.'.format(counter))
-            elif message.content.startswith('!sleep'):
+            elif command == 'sleep':
                 await asyncio.sleep(5)
                 await self.send_message(message.channel, 'Done sleeping')
 
