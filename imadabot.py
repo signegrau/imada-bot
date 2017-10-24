@@ -1,6 +1,7 @@
 import discord
 import asyncio
 from discord_token import get_token
+from testcommands import test_commands
 
 
 class imadabot(discord.Client):
@@ -31,17 +32,8 @@ class imadabot(discord.Client):
             else:
                 await self.send_message(message.channel, 'Only a administrator can do that')
         elif self.testing_channel == message.channel:
-            if command == 'test':
-                counter = 0
-                tmp = await self.send_message(message.channel, 'Calculating messages...')
-                async for log in self.logs_from(message.channel, limit=100):
-                    if log.author == message.author:
-                        counter += 1
-
-                await self.edit_message(tmp, 'You have {} messages.'.format(counter))
-            elif command == 'sleep':
-                await asyncio.sleep(5)
-                await self.send_message(message.channel, 'Done sleeping')
+            if command in test_commands:
+                await test_commands[command](self, message, arguments)
 
 
 if __name__ == "__main__":
