@@ -1,5 +1,7 @@
-from module import commandmodule
 import discord
+
+from module import commandmodule
+
 
 class roleassigner(commandmodule):
     def __init__(self, config):

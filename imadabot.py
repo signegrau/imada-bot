@@ -1,8 +1,10 @@
-import discord
 import json
+
+import discord
+
 from discord_token import get_token
-from testmodule import testmodule
-from roleassigner import roleassigner
+from modules.roleassigner import roleassigner
+from modules.testmodule import testmodule
 
 
 class imadabot(discord.Client):

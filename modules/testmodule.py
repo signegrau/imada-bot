@@ -1,5 +1,7 @@
 import asyncio
+
 from module import commandmodule
+
 
 class testmodule(commandmodule):
     def __init__(self):
