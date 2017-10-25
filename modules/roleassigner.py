@@ -15,7 +15,7 @@ class RoleAssigner(Module):
 
         self.config = config
 
-        self.roles = self.config['roles']
+        self.roles = self.config.get('roles', {})
 
     async def join(self, client: discord.Client, message: discord.Message, arguments: str):
         role_text = arguments[:6].lower()
@@ -48,12 +48,15 @@ class RoleAssigner(Module):
             await client.add_reaction(message, '❌')
 
     async def list(self, client: discord.Client, message: discord.Message, arguments: str):
-        message_string = '```\nAvailable roles:'
+        if len(self.roles) > 0:
+            message_string = '```\nAvailable roles:'
 
-        for role_text in self.roles:
-            role = discord.utils.get(message.server.roles, id=self.roles[role_text])
-            message_string += '\n\t' + role.name
+            for role_text in self.roles:
+                role = discord.utils.get(message.server.roles, id=self.roles[role_text])
+                message_string += '\n\t' + role.name
 
-        message_string += "```"
+            message_string += "```"
 
-        await client.send_message(message.channel, message_string)
+            await client.send_message(message.channel, message_string)
+        else:
+            await client.send_message(message.channel, 'No roles to join 😕')

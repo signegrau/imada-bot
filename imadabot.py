@@ -19,13 +19,18 @@ class ImadaBot(discord.Client):
 
         self.config = {}
 
-        Path('config.json')
-        with open('config.json', 'r', encoding='utf8') as file:
-            self.config = json.loads(file.read())
+        config_file = Path('config.json')
+        if config_file.is_file():
+            with config_file.open('r', encoding='utf8') as file:
+                self.config = json.loads(file.read())
+        else:
+            self.config = {
+
+            }
 
         self.modules = [
             TestModule(),
-            RoleAssigner(self.config['roleassigner']),
+            RoleAssigner(self.config.get('roleassigner', {})),
             ModuleManager()
         ]
 
