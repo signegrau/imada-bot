@@ -6,11 +6,12 @@ from command import CommandHandler, Command
 
 
 class Module:
-    def __init__(self, name: str, channels: List[discord.Channel], commands: List[Command]):
+    def __init__(self, name: str, description: str, channels: List[discord.Channel], commands: List[Command]):
         self.name = name
+        self.description = description
         self.channels = channels
         self.commands = self.create_module_dict(commands)
-        self.admin_only = False
+        self.admin_module = False
 
     def create_module_dict(self, commands: List[Command]) -> Dict[str, Command]:
         result = {}
@@ -22,12 +23,18 @@ class Module:
     def get_name(self) -> str:
         return self.name
 
+    def get_description(self) -> str:
+        return self.description
+
     def add_channel(self, channel: discord.Channel):
         self.channels.append(channel)
 
+    def remove_channel(self, channel: discord.Channel):
+        self.channels.remove(channel)
+
     def has_channel(self, member: discord.Member, channel: discord.Channel) -> bool:
         if channel.permissions_for(member).administrator:
-            if self.admin_only:
+            if self.admin_module:
                 return True
 
         return channel in self.channels

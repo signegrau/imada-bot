@@ -7,9 +7,10 @@ from module import Module
 
 class RoleAssigner(Module):
     def __init__(self, config: dict):
-        super().__init__('roleassigner', [], [
+        super().__init__('roleassigner',  "Assigning roles to users", [], [
             Command('join', 'join a role', self.join),
-            Command('leave', 'leave a role', self.leave)
+            Command('leave', 'leave a role', self.leave),
+            Command('roleslist', 'list available roles', self.list)
         ])
 
         self.config = config
@@ -45,6 +46,17 @@ class RoleAssigner(Module):
                 await client.add_reaction(message, '👀')
         else:
             await client.add_reaction(message, '❌')
+
+    async def list(self, client: discord.Client, message: discord.Message, arguments: str):
+        message_string = '```\nAvailable roles:'
+
+        for role_text in self.roles:
+            role = discord.utils.get(message.server.roles, id=self.roles[role_text])
+            message_string += '\n\t' + role.name
+
+        message_string += "```"
+
+        await client.send_message(message.channel, message_string)
 
     async def add_role(self, client: discord.Client, message: discord.Message, arguments: str):
         if not message.channel.permissions_for(message.author).administrator:

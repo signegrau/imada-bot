@@ -9,7 +9,7 @@ from module import Module
 
 class TestModule(Module):
     def __init__(self):
-        super(TestModule, self).__init__('test', [], [
+        super(TestModule, self).__init__('test', 'Module for testing that stuff works', [], [
             Command('test', 'getting number of messages sent by author', self.test),
             Command('sleep', 'bot will sleep for five seconds', self.sleep)
         ])
