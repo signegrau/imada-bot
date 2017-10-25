@@ -1,16 +1,23 @@
-from typing import List, Dict, Callable, Any
+from typing import List, Dict
 
 import discord
 
-CommandFunction = Callable[[discord.Client, discord.Message, str], Any]
+from command import CommandHandler, Command
 
 
 class Module:
-    def __init__(self, name: str, channels: List[discord.Channel], commands: Dict[str, CommandFunction]):
+    def __init__(self, name: str, channels: List[discord.Channel], commands: List[Command]):
         self.name = name
         self.channels = channels
-        self.commands = commands
+        self.commands = self.create_module_dict(commands)
         self.admin_only = False
+
+    def create_module_dict(self, commands: List[Command]) -> Dict[str, Command]:
+        result = {}
+        for command in commands:
+            result[command.name] = command
+
+        return result
 
     def get_name(self) -> str:
         return self.name
@@ -32,4 +39,4 @@ class Module:
         pass
 
     async def run_command(self, command: str, client: discord.Client, message: discord.Message, arguments: str):
-        await self.commands[command](client, message, arguments)
+        await self.commands[command].handle(client, message, arguments)

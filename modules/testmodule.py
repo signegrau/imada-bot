@@ -3,15 +3,16 @@ from typing import Any
 
 import discord
 
+from command import Command
 from module import Module
 
 
 class TestModule(Module):
     def __init__(self):
-        super(TestModule, self).__init__('test', [], {
-            'test': self.test,
-            'sleep': self.sleep
-        })
+        super(TestModule, self).__init__('test', [], [
+            Command('test', 'getting number of messages sent by author', self.test),
+            Command('sleep', 'bot will sleep for five seconds', self.sleep)
+        ])
 
     async def test(self, client: discord.Client, message: discord.Message, arguments: str):
         counter = 0

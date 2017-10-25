@@ -1,15 +1,16 @@
 import discord
 import asyncio
 
+from command import Command
 from module import Module
 
 
 class RoleAssigner(Module):
     def __init__(self, config: dict):
-        super().__init__('roleassigner', [], {
-            'join': self.join,
-            'leave': self.leave
-        })
+        super().__init__('roleassigner', [], [
+            Command('join', 'join a role', self.join),
+            Command('leave', 'leave a role', self.leave)
+        ])
 
         self.config = config
 

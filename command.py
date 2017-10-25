@@ -17,5 +17,8 @@ class Command:
     def get_help(self) -> str:
         return self.help
 
-    def handle(self, client: discord.Client, message: discord.Message, argument: str):
-        self.handler(client, message, argument)
+    def is_command(self, command: str) -> bool:
+        return self.name == command
+
+    async def handle(self, client: discord.Client, message: discord.Message, arguments: str):
+        await self.handler(client, message, arguments)
