@@ -1,27 +1,33 @@
+import asyncio
 import json
+from pathlib import Path
 
 import discord
 
 from discord_token import get_token
-from modules.roleassigner import roleassigner
-from modules.testmodule import testmodule
+from modules.modulemanager import ModuleManager
+from modules.roleassigner import RoleAssigner
+from modules.testmodule import TestModule
 
 
-class imadabot(discord.Client):
+class ImadaBot(discord.Client):
     def __init__(self):
-        super(imadabot, self).__init__()
+        super(ImadaBot, self).__init__()
 
         self.config = {}
+
+        Path('config.json')
         with open('config.json', 'r', encoding='utf8') as file:
             self.config = json.loads(file.read())
 
         self.modules = [
-            testmodule(),
-            roleassigner(self.config['roleassigner'])
+            TestModule(),
+            RoleAssigner(self.config['roleassigner']),
+            ModuleManager()
         ]
-        
+
     def run(self, token):
-        super(imadabot, self).run(token)
+        super(ImadaBot, self).run(token)
 
     async def on_ready(self):
         print('Logged in as')
@@ -39,6 +45,9 @@ class imadabot(discord.Client):
             await module.setup(self)
 
     async def on_message(self, message):
+        """
+        :type message: discord.Message
+        """
         if not message.content.startswith('!'):
             return
 
@@ -46,41 +55,26 @@ class imadabot(discord.Client):
         command = command[1:].lower()
         arguments = arguments.strip()
 
-        modules = self.get_loaded_modules(message.channel)
+        modules = self.get_loaded_modules(message.author, message.channel)
 
         for module in modules:
             if module.has_command(command):
                 await module.run_command(command, self, message, arguments)
 
-        if command == 'channeladd':
-            if message.channel.permissions_for(message.author).administrator:
-                module = self.get_module(arguments)
-
-                if module and not module.has_channel(message.channel):
-                    module.add_channel(message.channel)
-                    if arguments not in self.config:
-                        self.config[arguments] = {
-                            'channels': []
-                        }
-
-                    self.config[arguments]['channels'].append(message.channel.id)
-                    await self.send_message(message.channel, f'Added modules `{arguments}` to `{message.channel.name}`')
-                    self.save_config()
-                else:
-                    await self.send_message(message.channel,
-                                            f'No module named `{arguments}` or already added to channel')
-            else:
-                await self.send_message(message.channel, 'Only a administrator can do that')
-
     def save_config(self):
         with open('config.json', 'w', encoding='utf8') as file:
             file.write(json.dumps(self.config, indent=4))
 
-    def get_loaded_modules(self, channel):
+    def get_loaded_modules(self, member, channel):
+        """
+        :type member: discord.Member
+        :type channel: discord.Channel
+        :rtype : list[Module]
+        """
         modules = []
 
         for module in self.modules:
-            if module.has_channel(channel):
+            if module.has_channel(member, channel):
                 modules.append(module)
 
         return modules
@@ -94,5 +88,5 @@ class imadabot(discord.Client):
 
 
 if __name__ == "__main__":
-    bot = imadabot()
+    bot = ImadaBot()
     bot.run(get_token())

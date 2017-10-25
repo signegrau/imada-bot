@@ -1,9 +1,10 @@
 import discord
+import asyncio
 
-from module import commandmodule
+from module import Module
 
 
-class roleassigner(commandmodule):
+class RoleAssigner(Module):
     def __init__(self, config):
         super().__init__('roleassigner', [], {
             'join': self.join,
@@ -43,3 +44,13 @@ class roleassigner(commandmodule):
                 await client.add_reaction(message, '👀‍')
         else:
             await client.add_reaction(message, '❌')
+
+    async def add_role(self, client, message, arguments):
+        if not message.channel.permissions_for(message.author).administrator:
+            warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
+                                                                 f'file. This incident will be reported.')
+            await asyncio.sleep(60)
+            await client.delete_message(warning)
+            return
+
+

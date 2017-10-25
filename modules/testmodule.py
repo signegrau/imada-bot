@@ -1,11 +1,11 @@
 import asyncio
 
-from module import commandmodule
+from module import Module
 
 
-class testmodule(commandmodule):
+class TestModule(Module):
     def __init__(self):
-        super(testmodule, self).__init__('test', [], {
+        super(TestModule, self).__init__('test', [], {
             'test': self.test,
             'sleep': self.sleep
         })
