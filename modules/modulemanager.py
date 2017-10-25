@@ -1,5 +1,7 @@
 import asyncio
 
+import discord
+
 from module import Module
 
 
@@ -11,7 +13,7 @@ class ModuleManager(Module):
 
         self.admin_only = True
 
-    async def channel_add(self, client, message, arguments):
+    async def channel_add(self, client: discord.Client, message: discord.Message, arguments: str):
         if message.channel.permissions_for(message.author).administrator:
             module = client.get_module(arguments)
 

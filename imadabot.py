@@ -1,10 +1,13 @@
+from typing import List
+
 import asyncio
 import json
 from pathlib import Path
 
 import discord
-
 from discord_token import get_token
+
+from module import Module
 from modules.modulemanager import ModuleManager
 from modules.roleassigner import RoleAssigner
 from modules.testmodule import TestModule
@@ -26,7 +29,7 @@ class ImadaBot(discord.Client):
             ModuleManager()
         ]
 
-    def run(self, token):
+    def run(self, token: str):
         super(ImadaBot, self).run(token)
 
     async def on_ready(self):
@@ -44,10 +47,7 @@ class ImadaBot(discord.Client):
         for module in self.modules:
             await module.setup(self)
 
-    async def on_message(self, message):
-        """
-        :type message: discord.Message
-        """
+    async def on_message(self, message: discord.Message):
         if not message.content.startswith('!'):
             return
 
@@ -65,12 +65,7 @@ class ImadaBot(discord.Client):
         with open('config.json', 'w', encoding='utf8') as file:
             file.write(json.dumps(self.config, indent=4))
 
-    def get_loaded_modules(self, member, channel):
-        """
-        :type member: discord.Member
-        :type channel: discord.Channel
-        :rtype : list[Module]
-        """
+    def get_loaded_modules(self, member: discord.Member, channel: discord.Channel) -> List[Module]:
         modules = []
 
         for module in self.modules:
@@ -79,7 +74,7 @@ class ImadaBot(discord.Client):
 
         return modules
 
-    def get_module(self, name):
+    def get_module(self, name: str):
         for module in self.modules:
             if module.name == name:
                 return module

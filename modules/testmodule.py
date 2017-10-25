@@ -1,4 +1,7 @@
 import asyncio
+from typing import Any
+
+import discord
 
 from module import Module
 
@@ -10,7 +13,7 @@ class TestModule(Module):
             'sleep': self.sleep
         })
 
-    async def test(self, client, message, arguments):
+    async def test(self, client: discord.Client, message: discord.Message, arguments: str):
         counter = 0
         tmp = await client.send_message(message.channel, 'Calculating messages...')
         async for log in client.logs_from(message.channel, limit=100):
@@ -19,6 +22,6 @@ class TestModule(Module):
 
         await client.edit_message(tmp, 'You have {} messages.'.format(counter))
 
-    async def sleep(self, client, message, arguments):
+    async def sleep(self, client: discord.Client, message: discord.Message, arguments: str):
         await asyncio.sleep(5)
         await client.send_message(message.channel, 'Done sleeping')

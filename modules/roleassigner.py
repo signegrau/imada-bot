@@ -5,7 +5,7 @@ from module import Module
 
 
 class RoleAssigner(Module):
-    def __init__(self, config):
+    def __init__(self, config: dict):
         super().__init__('roleassigner', [], {
             'join': self.join,
             'leave': self.leave
@@ -15,7 +15,7 @@ class RoleAssigner(Module):
 
         self.roles = self.config['roles']
 
-    async def join(self, client, message, arguments):
+    async def join(self, client: discord.Client, message: discord.Message, arguments: str):
         role_text = arguments[:6].lower()
         member = message.author
 
@@ -30,7 +30,7 @@ class RoleAssigner(Module):
         else:
             await client.add_reaction(message, '❌')
 
-    async def leave(self, client, message, arguments):
+    async def leave(self, client: discord.Client, message: discord.Message, arguments: str):
         role_text = arguments[:6].lower()
         member = message.author
 
@@ -41,11 +41,11 @@ class RoleAssigner(Module):
                 await client.remove_roles(member, role)
                 await client.add_reaction(message, '👍')
             else:
-                await client.add_reaction(message, '👀‍')
+                await client.add_reaction(message, '👀')
         else:
             await client.add_reaction(message, '❌')
 
-    async def add_role(self, client, message, arguments):
+    async def add_role(self, client: discord.Client, message: discord.Message, arguments: str):
         if not message.channel.permissions_for(message.author).administrator:
             warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
                                                                  f'file. This incident will be reported.')
