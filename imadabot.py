@@ -70,6 +70,10 @@ class ImadaBot(discord.Client):
         with open('config.json', 'w', encoding='utf8') as file:
             file.write(json.dumps(self.config, indent=4))
 
+    def save_module_config(self, module_name: str, config: dict):
+        self.config[module_name] = config
+        self.save_config()
+
     def get_loaded_modules(self, member: discord.Member, channel: discord.Channel) -> List[Module]:
         modules = []
 
