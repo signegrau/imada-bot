@@ -73,8 +73,8 @@ class RoleAssigner(Module):
             await client.send_message(message.channel, 'Cannot add `NullPointerException` to roles')
         elif len(roles) == 1:
             role = roles[0]
-            if role.name not in self.roles:
-                self.roles[role.name] = role.id
+            if role.name.lower() not in self.roles:
+                self.roles[role.name.lower()] = role.id
                 await client.send_message(message.channel, f'Added role `{role.name}`')
             else:
                 await client.send_message(message.channel, f'Role already available')
@@ -86,8 +86,8 @@ class RoleAssigner(Module):
             message_text = '```\nAdded roles:'
             some_role_not_added = False
             for role in roles:
-                if role.name not in self.roles:
-                    self.roles[role.name] = role.id
+                if role.name.lower() not in self.roles:
+                    self.roles[role.name.lower()] = role.id
                     message_text += f'\n\t{role.name}'
                 else:
                     some_role_not_added = True
@@ -109,7 +109,7 @@ class RoleAssigner(Module):
         else:
             role = roles[0]
             if role.name in self.roles:
-                del self.roles[role.name]
+                del self.roles[role.name.lower()]
                 await client.send_message(message.channel, f'Removed role `{role.name}`')
             else:
                 await client.send_message(message.channel, f'Role is not available')
