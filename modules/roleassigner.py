@@ -10,7 +10,9 @@ class RoleAssigner(Module):
         super().__init__('roleassigner',  "Assigning roles to users", [], [
             Command('join', 'join a role', self.join),
             Command('leave', 'leave a role', self.leave),
-            Command('roleslist', 'list available roles', self.list)
+            Command('roleslist', 'list available roles', self.list),
+            Command('rolesadd', 'add roles to make available to join', self.add_role, admin_required=True),
+            Command('rolesremove', 'remove roles from available roles', self.remove_role, admin_required=True)
         ])
 
         self.config = config
@@ -18,7 +20,7 @@ class RoleAssigner(Module):
         self.roles = self.config.get('roles', {})
 
     async def join(self, client: discord.Client, message: discord.Message, arguments: str):
-        role_text = arguments[:6].lower()
+        role_text = arguments.lower()
         member = message.author
 
         if role_text in self.roles:
@@ -33,7 +35,7 @@ class RoleAssigner(Module):
             await client.add_reaction(message, '❌')
 
     async def leave(self, client: discord.Client, message: discord.Message, arguments: str):
-        role_text = arguments[:6].lower()
+        role_text = arguments.lower()
         member = message.author
 
         if role_text in self.roles:
@@ -60,3 +62,48 @@ class RoleAssigner(Module):
             await client.send_message(message.channel, message_string)
         else:
             await client.send_message(message.channel, 'No roles to join 😕')
+
+    async def add_role(self, client: discord.Client, message: discord.Message, arguments: str):
+        roles = message.role_mentions
+
+        if len(roles) < 1:
+            await client.send_message(message.channel, 'Cannot add `NullPointerException` to roles')
+        elif len(roles) == 1:
+            role = roles[0]
+            if role.name not in self.roles:
+                self.roles[role.name] = role.id
+                await client.send_message(message.channel, f'Added role `{role.name}`')
+            else:
+                await client.send_message(message.channel, f'Role already available')
+        else:
+            # Was this so important?
+            message_text = '```\nAdded roles:'
+            some_role_not_added = False
+            for role in roles:
+                if role.name not in self.roles:
+                    self.roles[role.name] = role.id
+                    message_text += f'\n\t{role.name}'
+                else:
+                    some_role_not_added = True
+
+            if some_role_not_added:
+                message_text += '\n\nOthers are already available'
+
+            message_text += '\n```'
+            await client.send_message(message.channel, message_text)
+
+    async def remove_role(self, client: discord.Client, message: discord.Message, arguments: str):
+        roles = message.role_mentions
+
+        if len(roles) < 1:
+            await client.send_message(message.channel, 'Cannot remove `NullPointerException` from roles')
+        else:
+            role = roles[0]
+            if role.name in self.roles:
+                del self.roles[role.name]
+                await client.send_message(message.channel, f'Removed role `{role.name}`')
+            else:
+                await client.send_message(message.channel, f'Role is not available')
+
+
+
