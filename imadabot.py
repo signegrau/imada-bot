@@ -10,7 +10,7 @@ class imadabot(discord.Client):
         super(imadabot, self).__init__()
 
         self.config = {}
-        with open('config.json', 'r') as file:
+        with open('config.json', 'r', encoding='utf8') as file:
             self.config = json.loads(file.read())
 
         self.modules = [
@@ -71,7 +71,7 @@ class imadabot(discord.Client):
                 await self.send_message(message.channel, 'Only a administrator can do that')
 
     def save_config(self):
-        with open('config.json', 'w') as file:
+        with open('config.json', 'w', encoding='utf8') as file:
             file.write(json.dumps(self.config, indent=4))
 
     def get_loaded_modules(self, channel):
