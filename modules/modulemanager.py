@@ -17,65 +17,46 @@ class ModuleManager(Module):
         self.admin_module = True
 
     async def channel_add(self, client: discord.Client, message: discord.Message, arguments: str):
-        if message.channel.permissions_for(message.author).administrator:
-            module = client.get_module(arguments)
+        module = client.get_module(arguments)
 
-            if module and not module.has_channel(message.author, message.channel):
-                module.add_channel(message.channel)
-                if arguments not in client.config:
-                    client.config[arguments] = {
-                        'channels': []
-                    }
+        if module and not module.has_channel(message.author, message.channel):
+            module.add_channel(message.channel)
+            if arguments not in client.config:
+                client.config[arguments] = {
+                    'channels': []
+                }
 
-                client.config[arguments]['channels'].append(message.channel.id)
-                await client.send_message(message.channel, f'Added modules `{arguments}` to `{message.channel.name}`')
-                client.save_config()
-            else:
-                await client.send_message(message.channel,
-                                          f'No module named `{arguments}` or already added to channel')
+            client.config[arguments]['channels'].append(message.channel.id)
+            await client.send_message(message.channel, f'Added modules `{arguments}` to `{message.channel.name}`')
+            client.save_config()
         else:
-            warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
-                                                                 f'file. This incident will be reported.')
-            await asyncio.sleep(60)
-            await client.delete_message(warning)
+            await client.send_message(message.channel,
+                                      f'No module named `{arguments}` or already added to channel')
 
     async def channel_remove(self, client: discord.Client, message: discord.Message, arguments: str):
-        if message.channel.permissions_for(message.author).administrator:
-            module = client.get_module(arguments)
+        module = client.get_module(arguments)
 
-            if module and module.has_channel(message.author, message.channel):
-                module.remove_channel(message.channel)
-                if arguments not in client.config:
-                    client.config[arguments] = {
-                        'channels': [f'{message.channel.id}']
-                    }
+        if module and module.has_channel(message.author, message.channel):
+            module.remove_channel(message.channel)
+            if arguments not in client.config:
+                client.config[arguments] = {
+                    'channels': [f'{message.channel.id}']
+                }
 
-                client.config[arguments]['channels'].remove(message.channel.id)
-                await client.send_message(message.channel,
-                                          f'Removed module `{arguments}` from `{message.channel.name}`')
-                client.save_config()
-            else:
-                await client.send_message(message.channel,
-                                          f'No module named `{arguments}` added to channel')
+            client.config[arguments]['channels'].remove(message.channel.id)
+            await client.send_message(message.channel,
+                                      f'Removed module `{arguments}` from `{message.channel.name}`')
+            client.save_config()
         else:
-            warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
-                                                                 f'file. This incident will be reported.')
-            await asyncio.sleep(60)
-            await client.delete_message(warning)
+            await client.send_message(message.channel,
+                                      f'No module named `{arguments}` added to channel')
 
     async def channel_list(self, client: discord.Client, message: discord.Message, arguments: str):
-        if message.channel.permissions_for(message.author).administrator:
-            message_string = '```\nAvailable modules on server:'
+        message_string = '```\nAvailable modules on server:'
 
-            for module in client.modules:
-                message_string += '\n\t' + module.name
+        for module in client.modules:
+            message_string += '\n\t' + module.name
 
-            message_string += "```"
+        message_string += "```"
 
-            await client.send_message(message.channel, message_string)
-
-        else:
-            warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
-                                                                 f'file. This incident will be reported.')
-            await asyncio.sleep(60)
-            await client.delete_message(warning)
+        await client.send_message(message.channel, message_string)

@@ -57,13 +57,3 @@ class RoleAssigner(Module):
         message_string += "```"
 
         await client.send_message(message.channel, message_string)
-
-    async def add_role(self, client: discord.Client, message: discord.Message, arguments: str):
-        if not message.channel.permissions_for(message.author).administrator:
-            warning = await client.send_message(message.channel, f'{message.author.mention} is not in the sudoers '
-                                                                 f'file. This incident will be reported.')
-            await asyncio.sleep(60)
-            await client.delete_message(warning)
-            return
-
-

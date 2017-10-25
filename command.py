@@ -6,10 +6,11 @@ CommandHandler = Callable[[discord.Client, discord.Message, str], Any]
 
 
 class Command:
-    def __init__(self, name: str, help: str, handler: CommandHandler):
+    def __init__(self, name: str, help: str, handler: CommandHandler, admin_required=False):
         self.name = name
         self.help = help
         self.handler = handler
+        self.admin_required = admin_required
 
     def get_name(self) -> str:
         return self.name
