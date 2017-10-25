@@ -8,6 +8,7 @@ import discord
 from discord_token import get_token
 
 from module import Module
+from modules.helpmodule import HelpModule
 from modules.modulemanager import ModuleManager
 from modules.roleassigner import RoleAssigner
 from modules.testmodule import TestModule
@@ -31,7 +32,8 @@ class ImadaBot(discord.Client):
         self.modules = [
             TestModule(),
             RoleAssigner(self.config.get('roleassigner', {})),
-            ModuleManager()
+            ModuleManager(),
+            HelpModule()
         ]
 
     def run(self, token: str):
