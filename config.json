@@ -1,7 +1,3 @@
 {
-    "roleassigner": {
-        "channels": [
-            "372475764978745354"
-        ]
-    }
+    "token": "INSERT_TOKEN_HERE"
 }
