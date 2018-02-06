@@ -63,8 +63,9 @@ class RoleAssigner(Module):
         else:
             await client.send_message(message.channel, 'No roles to join 😕')
 
-    def sync_config(self):
+    def sync_config(self, client: discord.Client):
         self.config['roles'] = self.roles
+        client.save_module_config(self.name, self.config)
 
     async def add_role(self, client: discord.Client, message: discord.Message, arguments: str):
         roles = message.role_mentions
@@ -79,8 +80,7 @@ class RoleAssigner(Module):
             else:
                 await client.send_message(message.channel, f'Role already available')
 
-            self.sync_config()
-            client.save_module_config(self.name, self.config)
+            self.sync_config(client)
         else:
             # Was this so important?
             message_text = '```\nAdded roles:'
@@ -98,8 +98,7 @@ class RoleAssigner(Module):
             message_text += '\n```'
             await client.send_message(message.channel, message_text)
 
-            self.sync_config()
-            client.save_module_config(self.name, self.config)
+            self.sync_config(client)
 
     async def remove_role(self, client: discord.Client, message: discord.Message, arguments: str):
         roles = message.role_mentions
@@ -114,5 +113,4 @@ class RoleAssigner(Module):
             else:
                 await client.send_message(message.channel, f'Role is not available')
 
-            self.sync_config()
-            client.save_module_config(self.name, self.config)
+            self.sync_config(client)

@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 
 import discord
-from discord_token import get_token
 
 from module import Module
 from modules.informationmodule import InformationModule
@@ -25,9 +24,18 @@ class ImadaBot(discord.Client):
             with config_file.open('r', encoding='utf8') as file:
                 self.config = json.loads(file.read())
         else:
-            self.config = {
+            with config_file.open('w', encoding='utf8') as file:
+                config_template = {"token": "INSERT_TOKEN_HERE"}
+                file.write(json.dumps(config_template, indent=4))
 
-            }
+            print("ERROR: Token not provided. Please add it to config.json")
+            exit(1)
+
+        self.token = self.config.get("token", "INSERT_TOKEN_HERE")
+
+        if self.token == "INSERT_TOKEN_HERE":
+            print("ERROR: Token not provided. Please add it to config.json")
+            exit(1)
 
         self.modules = [
             TestModule(),
@@ -36,8 +44,8 @@ class ImadaBot(discord.Client):
             InformationModule()
         ]
 
-    def run(self, token: str):
-        super(ImadaBot, self).run(token)
+    def run(self):
+        super(ImadaBot, self).run(self.token)
 
     async def on_ready(self):
         print('Logged in as')
@@ -73,7 +81,11 @@ class ImadaBot(discord.Client):
             file.write(json.dumps(self.config, indent=4))
 
     def save_module_config(self, module_name: str, config: dict):
-        self.config[module_name] = config
+        new_config = config
+        new_config["channels"] = self.config.get(module_name, {}).get("channels", {})
+
+        self.config[module_name] = new_config
+
         self.save_config()
 
     def get_loaded_modules(self, member: discord.Member, channel: discord.Channel) -> List[Module]:
@@ -95,4 +107,4 @@ class ImadaBot(discord.Client):
 
 if __name__ == "__main__":
     bot = ImadaBot()
-    bot.run(get_token())
+    bot.run()
